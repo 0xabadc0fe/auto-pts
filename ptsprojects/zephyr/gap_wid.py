@@ -165,12 +165,18 @@ def hdl_wid_40(desc):
     return True
 
 
-def hdl_wid_46(desc):
-    return True
 
 
 def hdl_wid_44(desc):
     btp.gap_disconn()
+    return True
+
+    
+def hdl_wid_46(desc):
+    btp.gap_wait_for_connection()
+    bd_addr = btp.pts_addr_get()
+    bd_addr_type = btp.pts_addr_type_get()
+    btp.gap_conn_param_update(bd_addr, bd_addr_type, 16, 32, 0, 200)
     return True
 
 
@@ -402,7 +408,7 @@ def hdl_wid_112(desc):
 
 
 def hdl_wid_114(desc):
-    return True
+    return hdl_wid_46(desc)
 
 
 def hdl_wid_118(desc):
@@ -443,9 +449,7 @@ def hdl_wid_125(desc):
 
 
 def hdl_wid_127(desc):
-    btp.gap_conn_param_update(btp.pts_addr_get(), btp.pts_addr_type_get(),
-                              720, 864, 0, 400)
-    return True
+    return hdl_wid_46(desc)
 
 
 def hdl_wid_130(desc):
@@ -679,7 +683,7 @@ def hdl_wid_161(desc):
 
 
 def hdl_wid_162(desc):
-    return True
+    return hdl_wid_46(desc)
 
 
 def hdl_wid_169(desc):
