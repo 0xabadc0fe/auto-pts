@@ -15,6 +15,7 @@
 
 """Wrapper around btp messages. The functions are added as needed."""
 
+import time
 import logging
 import binascii
 import struct
@@ -730,7 +731,7 @@ def gap_disconn(bd_addr=None, bd_addr_type=None):
     data_ba.extend(bd_addr_ba)
 
     iutctl.btp_socket.send(*GAP['disconn'], data=data_ba)
-
+    time.sleep(5)
     gap_command_rsp_succ()
 
 

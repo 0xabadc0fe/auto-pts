@@ -788,9 +788,20 @@ def run_test_case_thread_entry(pts, test_case):
     error_code = None
 
     try:
+        x = 0
         RUNNING_TEST_CASE[test_case.name] = test_case
         test_case.state = "PRE_RUN"
-        test_case.pre_run()
+        try:
+            test_case.pre_run()
+        except Exception as identifier:
+            x = 1
+
+        if x > 0:
+            test_case.post_run(error_code)
+            RUNNING_TEST_CASE[test_case.name] = test_case
+            test_case.state = "PRE_RUN"
+            test_case.pre_run()
+        
         test_case.status = "RUNNING"
         test_case.state = "RUNNING"
         pts.callback_thread.set_current_test_case(test_case.name)

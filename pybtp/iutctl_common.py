@@ -166,7 +166,7 @@ class BTPWorker(BTPSocket):
     def _read_timeout(flag):
         flag.clear()
 
-    def read(self, timeout=20.0):
+    def read(self, timeout=5.0):
         logging.debug("%s", self.read.__name__)
 
         flag = threading.Event()

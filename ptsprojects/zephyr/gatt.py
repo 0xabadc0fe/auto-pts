@@ -44,6 +44,20 @@ class Value:
     eight_bytes_2 = 'FEDCBA9876543210'
     long_1 = eight_bytes_1 * 4
     long_2 = eight_bytes_2 * 4
+    long_3 = '0707199007071990070719900707199007071990070719900707199007071990'
+    one_byte_1 = '10'
+    byte_80_1 = one_byte_1 * 80
+    one_byte_2 = '11'
+    byte_80_2 = one_byte_2 * 80
+    one_byte_3 = '12'
+    byte_80_3 = one_byte_3 * 80
+    one_byte_4 = '13'
+    byte_80_4 = one_byte_4 * 80
+    one_byte_5 = '14'
+    byte_80_5 = one_byte_5 * 80
+    long_byte_64 = one_byte_5 * 64
+    long_byte_512 = one_byte_4 * 512
+    long_byte_128 = one_byte_3 * 128
 
 
 iut_attr_db_off = 0x000b
@@ -204,16 +218,16 @@ def test_cases_server(ptses):
                      TestFunc(btp.gatts_add_svc, 0, UUID.VND16_3),
                      TestFunc(btp.gatts_add_inc_svc, 1),
                      TestFunc(btp.gatts_add_char, 0, 0x00, 0x00, UUID.VND16_4),
-                     TestFunc(btp.gatts_set_val, 0, Value.one_byte),
+                     TestFunc(btp.gatts_set_val, 0, Value.one_byte_1),
                      TestFunc(btp.gatts_add_char, 0, Prop.read, Perm.read_authz,
                               UUID.VND128_1),
-                     TestFunc(btp.gatts_set_val, 0, Value.one_byte),
+                     TestFunc(btp.gatts_set_val, 0, Value.one_byte_2),
                      TestFunc(btp.gatts_add_char, 0, Prop.read,
                               Perm.read_authn, UUID.VND128_2),
-                     TestFunc(btp.gatts_set_val, 0, Value.one_byte),
+                     TestFunc(btp.gatts_set_val, 0, Value.one_byte_3),
                      TestFunc(btp.gatts_add_char, 0, Prop.read,
                               Perm.read_enc, UUID.VND16_2),
-                     TestFunc(btp.gatts_set_val, 0, Value.one_byte),
+                     TestFunc(btp.gatts_set_val, 0, Value.one_byte_4),
                      TestFunc(btp.gatts_set_enc_key_size, 0, 0x0f),
                      TestFunc(btp.gatts_add_char, 0,
                               Prop.read | Prop.write,
@@ -297,9 +311,36 @@ def test_cases_server(ptses):
                      TestFunc(btp.gatts_start_server),
                      TestFunc(btp.gap_adv_ind_on, start_wid=1)]
 
+    init_server_4 = [TestFunc(btp.gatts_add_svc, 0, UUID.VND16_1),
+                     TestFunc(btp.gatts_add_char, 0,
+                              Prop.read | Prop.write | Prop.nofity,
+                              Perm.read | Perm.write, UUID.VND16_2),
+                     TestFunc(btp.gatts_set_val, 0, Value.byte_80_1),
+                     TestFunc(btp.gatts_add_svc, 0, UUID.VND16_3),
+                     TestFunc(btp.gatts_add_inc_svc, 1),
+                     TestFunc(btp.gatts_add_char, 0, 0x00, 0x00, UUID.VND16_4),
+                     TestFunc(btp.gatts_set_val, 0, Value.byte_80_2),
+                     TestFunc(btp.gatts_add_char, 0, Prop.read, Perm.read,
+                              UUID.VND128_1),
+                     TestFunc(btp.gatts_set_val, 0, Value.byte_80_3),
+                     TestFunc(btp.gatts_add_char, 0, Prop.read,
+                              Perm.read, UUID.VND128_2),
+                     TestFunc(btp.gatts_set_val, 0, Value.byte_80_4),
+                     TestFunc(btp.gatts_add_char, 0, Prop.read,
+                              Perm.read, UUID.VND16_2),
+                     TestFunc(btp.gatts_set_val, 0, Value.long_byte_512),
+                     TestFunc(btp.gatts_add_char, 0,
+                              Prop.read | Prop.write,
+                              Perm.read | Perm.write, UUID.VND16_5),
+                     TestFunc(btp.gatts_set_val, 0, Value.long_byte_128),
+                     TestFunc(btp.gatts_add_desc, 0,
+                              Perm.read | Perm.write, UUID.VND16_3),
+                     TestFunc(btp.gatts_set_val, 0, Value.long_3),
+                     TestFunc(btp.gatts_start_server)]
+
     test_cases = [
         ZTestCase("GATT", "GATT/SR/GAC/BV-01-C",
-                  pre_conditions_1 + init_server_1,
+                  pre_conditions_1 + init_server_4,
                   generic_wid_hdl=gatt_wid_hdl),
         ZTestCase("GATT", "GATT/SR/GAD/BV-01-C",
                   pre_conditions_1 + init_server_1,
