@@ -66,6 +66,9 @@ class ZephyrCtl:
             self.board = Board(board_name, kernel_image, tty_file)
         else:  # DUT is QEMU or a board that won't be reset
             self.board = None
+        
+        if board_name == "linux":
+            self.linux = 1
 
         self.qemu_process = None
         self.socat_process = None
@@ -92,6 +95,16 @@ class ZephyrCtl:
                                                   shell=False,
                                                   stdout=IUT_LOG_FO,
                                                   stderr=IUT_LOG_FO)
+        elif self.linux:
+            cmd = ("%s" % (self.kernel_image))
+
+            log("Starting linux zephyr process: %s", cmd)
+
+            # TODO check if linux zephyr process has started correctly
+            self.qemu_process = subprocess.Popen(shlex.split(cmd),
+                                                 shell=False,
+                                                 stdout=IUT_LOG_FO,
+                                                 stderr=IUT_LOG_FO)
         else:
             qemu_cmd = get_qemu_cmd(self.kernel_image)
 
@@ -182,13 +195,15 @@ class Board:
     c1000 = "c1000"
     nrf52 = "nrf52"
     reel  = "reel_board"
+    linux = "linux"
 
     # for command line options
     names = [
         arduino_101,
         c1000,
         nrf52,
-        reel
+        reel,
+        linux,
     ]
 
     def __init__(self, board_name, kernel_image, tty_file):
@@ -240,7 +255,8 @@ class Board:
             self.arduino_101: self._get_reset_cmd_arduino_101,
             self.c1000: self._get_reset_cmd_c1000,
             self.nrf52: self._get_reset_cmd_nrf52,
-            self.reel: self._get_reset_cmd_reel
+            self.reel: self._get_reset_cmd_reel,
+            self.linux: self._get_reset_cmd_linux
         }
 
         reset_cmd_getter = reset_cmd_getters[self.name]
@@ -294,6 +310,15 @@ class Board:
 
         """
         return 'pyocd cmd -c reset'
+
+    def _get_reset_cmd_linux(self):
+        """Return reset command for linux DUT
+
+        Dependency: xxx command line tools
+
+        """
+        return 'echo "kill -9 tester"'
+
 
 def get_iut():
     return ZEPHYR

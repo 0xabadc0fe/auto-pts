@@ -36,6 +36,7 @@ def check_args(args):
     tty_file = args.tty_file
     kernel_image = args.kernel_image
     ip_addr = args.ip_addr
+    board = args.board
 
     if not ip_addr:
         sys.exit("Server IP address not specified!")
@@ -46,7 +47,7 @@ def check_args(args):
             sys.exit("%s is not a TTY file!" % repr(tty_file))
         if not os.path.exists(tty_file):
             sys.exit("%s TTY file does not exist!" % repr(tty_file))
-    else:  # no TTY - will run DUT in QEMU
+    elif not board:  # no TTY - will run DUT in QEMU
         if not find_executable(qemu_bin):
             sys.exit("%s is needed but not found!" % (qemu_bin,))
 
@@ -91,8 +92,6 @@ def parse_args():
 
 def main():
     """Main."""
-    if os.geteuid() == 0:  # root privileges are not needed
-        sys.exit("Please do not run this program as root.")
 
     args = parse_args()
 
